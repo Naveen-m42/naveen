@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poke Cafe - Fresh food. Fast ordering.</title>
+    <!-- Modern Sans-serif Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="Poke Cafe - Fresh food and fast ordering. Premium digital menu.">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">Poke Cafe</div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#menu">Menu</a>
+        </div>
+    </nav>
+
+    <!-- Floating Cart Icon -->
+    <div class="floating-cart" id="floatingCart">
+        <span class="cart-icon">🛒</span>
+        <span class="cart-count" id="cartCount">0</span>
+    </div>
+
+    <!-- Main Application Content -->
+    <main>
+        <!-- 1. HERO / HOME SECTION -->
+        <section id="home" class="hero-section">
+            <div class="hero-content">
+                <h1>Poke Cafe</h1>
+                <p class="tagline">Fresh food. Fast ordering.</p>
+                <!-- Smooth scroll to menu -->
+                <button class="btn-primary" onclick="document.getElementById('menu').scrollIntoView({behavior: 'smooth'})">View Menu</button>
+            </div>
+            <div class="hero-featured">
+                <!-- Featured Dish Cards with Placeholder Images -->
+                <div class="featured-card">
+                    <div class="img-placeholder hero-img"> Featured Dish 1 </div>
+                </div>
+                <div class="featured-card">
+                    <div class="img-placeholder hero-img"> Featured Dish 2 </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. MENU SECTION -->
+        <section id="menu" class="menu-section">
+            <div class="menu-header">
+                <h2>Our Menu</h2>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search dishes...">
+                </div>
+            </div>
+            
+            <!-- Sticky Category Filter -->
+            <div class="sticky-category-bar" id="categoryBar">
+                <button class="category-btn active" data-category="all">All</button>
+                <button class="category-btn" data-category="starters">Starters</button>
+                <button class="category-btn" data-category="main">Main Course</button>
+                <button class="category-btn" data-category="beverages">Beverages</button>
+                <button class="category-btn" data-category="desserts">Desserts</button>
+            </div>
+
+            <!-- Top Picks Section (Visible only when All is selected and no search) -->
+            <div class="top-picks-section">
+                <h3>Chef's Top Picks</h3>
+                <div class="menu-grid" id="topPicksGrid">
+                    <!-- Top picks dynamically populated via JavaScript -->
+                </div>
+            </div>
+
+            <!-- Main Menu Grid -->
+            <div class="menu-grid" id="menuGrid">
+                <!-- Menu items dynamically populated via JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals for Popups -->
+
+    <!-- 3. DISH DETAIL POPUP MODAL -->
+    <div class="modal" id="dishModal">
+        <div class="modal-content dish-detail">
+            <span class="close-btn" onclick="closeModal('dishModal')">&times;</span>
+            <div class="img-placeholder large-img" id="modalImg">Dish Image Placeholder</div>
+            <h2 id="modalDishName">Dish Name</h2>
+            <p id="modalDishDesc" class="dish-desc-full">Full description goes here.</p>
+            
+            <div class="ingredients">
+                <h3>Ingredients:</h3>
+                <ul id="modalIngredients">
+                    <!-- Ingredients list populated via JavaScript -->
+                </ul>
+            </div>
+            
+            <div class="dish-actions">
+                <div class="quantity-selector">
+                    <button class="qty-btn" id="modalQtyMinus">-</button>
+                    <span id="modalQty">1</span>
+                    <button class="qty-btn" id="modalQtyPlus">+</button>
+                </div>
+                <button class="btn-primary" id="modalAddToCart">Add to Cart - <span id="modalPrice">₹0</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. CART PAGE MODAL -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content cart-page">
+            <span class="close-btn" onclick="closeModal('cartModal')">&times;</span>
+            <h2>Your Cart</h2>
+            
+            <div class="cart-items" id="cartItemsList">
+                <!-- Cart items list populated via JavaScript -->
+            </div>
+            
+            <div class="cart-summary">
+                <div class="total-row">
+                    <span>Total Amount:</span>
+                    <span class="total-price" id="cartTotalPrice">₹0</span>
+                </div>
+                <div class="input-group">
+                    <label for="tableNumber">Table Number:</label>
+                    <input type="number" id="tableNumber" placeholder="e.g. 5" min="1">
+                </div>
+                <button class="btn-primary btn-full" id="btnProceedToBill">Proceed to Bill</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. BILL PAGE MODAL -->
+    <div class="modal" id="billModal">
+        <div class="modal-content bill-page">
+            <span class="close-btn" onclick="closeModal('billModal')">&times;</span>
+            
+            <div class="bill-header">
+                <h2>Poke Cafe</h2>
+                <p>Table: <span id="billTableNumber"></span></p>
+                <p class="bill-date" id="billDate"></p>
+            </div>
+            
+            <div class="bill-items" id="billItemsList">
+                <!-- Ordered items populated via JavaScript -->
+            </div>
+            
+            <div class="bill-total">
+                <span>Total Amount:</span>
+                <span class="total-price" id="billTotalPrice">₹0</span>
+            </div>
+            
+            <div class="bill-actions">
+                <button class="btn-primary" id="btnConfirmOrder">Confirm Order</button>
+                <button class="btn-secondary" id="btnPayCounter">Pay at Counter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>

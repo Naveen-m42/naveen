@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poke Cafe Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">Poke Cafe Admin</div>
+            <ul class="nav">
+                <li class="nav-item active" data-target="dashboard">Dashboard</li>
+                <li class="nav-item" data-target="manage">Manage Dishes</li>
+                <li class="nav-item" data-target="orders">Orders</li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <h2>Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Dishes</h3>
+                        <p id="stat-total">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Available</h3>
+                        <p id="stat-available">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Unavailable</h3>
+                        <p id="stat-unavailable">0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Manage Dishes Section -->
+            <section id="manage" class="content-section">
+                <div class="manage-header">
+                    <h2>Manage Dishes</h2>
+                    <button class="btn-primary" id="btnAddDish">+ Add New Dish</button>
+                </div>
+                
+                <div class="controls-bar">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search dishes...">
+                    </div>
+                    <div class="filter-box">
+                        <select id="categoryFilter">
+                            <option value="all">All Categories</option>
+                            <option value="starters">Starters</option>
+                            <option value="main">Main Course</option>
+                            <option value="beverages">Beverages</option>
+                            <option value="desserts">Desserts</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Popular</th>
+                                <th>Available</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dishesTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Orders Section Placeholder -->
+            <section id="orders" class="content-section">
+                <h2>Orders</h2>
+                <div class="placeholder-card">
+                    <p>Order management UI coming soon...</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Dish Modal -->
+    <div class="modal" id="dishModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Add New Dish</h3>
+            <form id="dishForm">
+                <input type="hidden" id="dishId">
+                
+                <div class="form-group">
+                    <label for="dishName">Name</label>
+                    <input type="text" id="dishName" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="dishPrice">Price (₹)</label>
+                        <input type="number" id="dishPrice" required min="0">
+                    </div>
+                    <div class="form-group half">
+                        <label for="dishCategory">Category</label>
+                        <select id="dishCategory" required>
+                            <option value="starters">Starters</option>
+                            <option value="main">Main Course</option>
+                            <option value="beverages">Beverages</option>
+                            <option value="desserts">Desserts</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="dishDesc">Description</label>
+                    <textarea id="dishDesc" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="dishIngredients">Ingredients (comma separated)</label>
+                    <input type="text" id="dishIngredients">
+                </div>
+
+                <div class="form-row mt-2">
+                    <div class="toggle-group">
+                        <label>Available</label>
+                        <label class="switch">
+                            <input type="checkbox" id="dishAvailable" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <label>Popular</label>
+                        <label class="switch">
+                            <input type="checkbox" id="dishPopular">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="btnCancelModal">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Dish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content delete-modal">
+            <h3>Delete Dish?</h3>
+            <p>Are you sure you want to delete this dish? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" id="btnCancelDelete">Cancel</button>
+                <button type="button" class="btn-danger" id="btnConfirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>
