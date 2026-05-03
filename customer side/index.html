@@ -37,11 +37,13 @@
             </div>
             <div class="hero-featured">
                 <!-- Featured Dish Cards with Placeholder Images -->
-                <div class="featured-card">
-                    <div class="img-placeholder hero-img"> Featured Dish 1 </div>
+                <div class="featured-card" id="heroCard1" style="cursor: pointer; display: none;" onclick="">
+                    <img id="heroImg1" src="" class="hero-img" alt="Featured" style="object-fit: cover; background-color: #E8E4D9;">
+                    <div id="heroName1" style="text-align: center; margin-top: 1rem; font-weight: 600;">Dish 1</div>
                 </div>
-                <div class="featured-card">
-                    <div class="img-placeholder hero-img"> Featured Dish 2 </div>
+                <div class="featured-card" id="heroCard2" style="cursor: pointer; display: none;" onclick="">
+                    <img id="heroImg2" src="" class="hero-img" alt="Featured" style="object-fit: cover; background-color: #E8E4D9;">
+                    <div id="heroName2" style="text-align: center; margin-top: 1rem; font-weight: 600;">Dish 2</div>
                 </div>
             </div>
         </section>
@@ -76,6 +78,14 @@
             <div class="menu-grid" id="menuGrid">
                 <!-- Menu items dynamically populated via JavaScript -->
             </div>
+
+            <!-- Order Tracking Section -->
+            <div class="tracking-section" id="trackingSection" style="display: none; margin-top: 3rem;">
+                <h2>Your Active Orders</h2>
+                <div class="tracking-grid" id="trackingGrid" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                    <!-- Orders dynamically populated via JavaScript -->
+                </div>
+            </div>
         </section>
     </main>
 
@@ -85,7 +95,7 @@
     <div class="modal" id="dishModal">
         <div class="modal-content dish-detail">
             <span class="close-btn" onclick="closeModal('dishModal')">&times;</span>
-            <div class="img-placeholder large-img" id="modalImg">Dish Image Placeholder</div>
+            <img id="modalImg" class="large-img" src="" alt="Dish Image" style="object-fit: cover; background-color: #F8F6F0;">
             <h2 id="modalDishName">Dish Name</h2>
             <p id="modalDishDesc" class="dish-desc-full">Full description goes here.</p>
             
@@ -122,7 +132,7 @@
                     <span>Total Amount:</span>
                     <span class="total-price" id="cartTotalPrice">₹0</span>
                 </div>
-                <div class="input-group">
+                <div class="input-group" id="tableNumberGroup">
                     <label for="tableNumber">Table Number:</label>
                     <input type="number" id="tableNumber" placeholder="e.g. 5" min="1">
                 </div>

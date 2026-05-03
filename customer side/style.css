@@ -802,3 +802,47 @@ body {
         justify-content: center;
     }
 }
+
+/* =========================================
+   10. ORDER TRACKING UI
+   ========================================= */
+.tracking-card {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 0 4px 12px rgba(62, 44, 35, 0.05);
+}
+
+.tracking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
+.tracking-status-badge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+.tracking-status-badge.placed { background-color: rgba(243, 156, 18, 0.1); color: #f39c12; }
+.tracking-status-badge.preparing { background-color: rgba(52, 152, 219, 0.1); color: #3498db; }
+.tracking-status-badge.ready { background-color: rgba(46, 204, 113, 0.1); color: #2ecc71; }
+
+.tracking-items {
+    font-size: 0.95rem;
+    color: var(--text-light);
+}
+
+.tracking-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+}

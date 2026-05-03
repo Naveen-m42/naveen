@@ -90,3 +90,6 @@ export function searchItems(query) {
 export function getAvailableItems() {
     return getData().filter(item => item.available);
 }
+
+// Export orders functionality
+export * from "./orders.js";

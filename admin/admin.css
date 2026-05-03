@@ -421,3 +421,119 @@ input:checked + .slider:before {
     color: var(--text-light);
     box-shadow: var(--shadow-sm);
 }
+
+/* Orders Section & Image */
+.admin-dish-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 12px;
+    background-color: #F8F6F0;
+}
+
+.orders-layout {
+    display: flex;
+    gap: 2rem;
+}
+
+.orders-main {
+    flex: 2;
+}
+
+.orders-sidebar {
+    flex: 1;
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    height: fit-content;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.order-card {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid #ccc; /* Default */
+}
+
+/* Status Colors */
+.order-card.placed {
+    border-left-color: #f39c12; /* Orange */
+}
+
+.order-card.preparing {
+    border-left-color: #3498db; /* Blue */
+}
+
+.order-card.ready {
+    border-left-color: #2ecc71; /* Green */
+}
+
+.order-card.completed {
+    border-left-color: #95a5a6; /* Grey */
+    opacity: 0.7;
+}
+
+.order-card.cancelled {
+    border-left-color: #e74c3c; /* Red */
+    opacity: 0.5;
+}
+
+.order-status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.order-status-badge.placed { background-color: rgba(243, 156, 18, 0.1); color: #f39c12; }
+.order-status-badge.preparing { background-color: rgba(52, 152, 219, 0.1); color: #3498db; }
+.order-status-badge.ready { background-color: rgba(46, 204, 113, 0.1); color: #2ecc71; }
+.order-status-badge.completed { background-color: rgba(149, 165, 166, 0.1); color: #95a5a6; }
+.order-status-badge.cancelled { background-color: rgba(231, 76, 60, 0.1); color: #e74c3c; }
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.order-items {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.top-dishes-list {
+    list-style: none;
+    margin-top: 1rem;
+}
+
+.top-dishes-list li {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.top-dishes-list li:last-child {
+    border-bottom: none;
+}
+
+.top-dish-rank {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 1.2rem;
+}

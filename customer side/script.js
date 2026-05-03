@@ -10,6 +10,10 @@ import {
     getItemById,
     filterByCategory,
     searchItems,
+    placeOrder,
+    updateOrderStatus,
+    getOrders,
+    getTopPopularDishes
 } from "../backend/core/api.js";
 
 /* =========================================================
@@ -18,6 +22,7 @@ import {
 let cart = [];
 let currentCategory = "all";
 let searchQuery = "";
+let previousOrderStatuses = {};
 
 /* =========================================================
    3. DOM ELEMENTS
@@ -33,8 +38,67 @@ const floatingCart = document.getElementById("floatingCart");
    4. INITIALIZATION
    ========================================================= */
 function init() {
+    checkTableId();
+    setupFeaturedDishes();
     renderMenu();
     setupEventListeners();
+    renderOrderTracking();
+
+    setInterval(renderOrderTracking, 3000);
+
+    // Auto-refresh when localStorage changes in another tab (like admin)
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'pokecafe_menu' || e.key === 'restaurant_orders') {
+            setupFeaturedDishes();
+            renderMenu();
+            renderOrderTracking();
+        }
+    });
+}
+
+function checkTableId() {
+    const saved = localStorage.getItem('customer_table_id');
+    if (saved) {
+        document.getElementById("tableNumber").value = saved;
+        const group = document.getElementById("tableNumberGroup");
+        if(group) group.style.display = "none";
+    }
+}
+
+function setupFeaturedDishes() {
+    const topIds = getTopPopularDishes(10);
+    const availableTop = [];
+    
+    for (const id of topIds) {
+        const dish = getItemById(id);
+        if (dish && dish.available) {
+            availableTop.push(dish);
+            if (availableTop.length === 2) break;
+        }
+    }
+
+    if (availableTop.length < 2) {
+        const allDishes = getMenu().filter(d => d.available && d.popular);
+        for (const dish of allDishes) {
+            if (!availableTop.find(d => d.id === dish.id)) {
+                availableTop.push(dish);
+            }
+            if (availableTop.length === 2) break;
+        }
+    }
+    
+    if (availableTop[0]) {
+        document.getElementById('heroCard1').style.display = 'block';
+        document.getElementById('heroImg1').src = availableTop[0].image || 'assets/placeholder.jpg';
+        document.getElementById('heroName1').innerText = availableTop[0].name;
+        document.getElementById('heroCard1').onclick = () => openDishModal(availableTop[0]);
+    }
+    if (availableTop[1]) {
+        document.getElementById('heroCard2').style.display = 'block';
+        document.getElementById('heroImg2').src = availableTop[1].image || 'assets/placeholder.jpg';
+        document.getElementById('heroName2').innerText = availableTop[1].name;
+        document.getElementById('heroCard2').onclick = () => openDishModal(availableTop[1]);
+    }
 }
 
 /* =========================================================
@@ -89,7 +153,7 @@ function createDishCard(dish) {
 
     div.innerHTML = `
         ${badgeHtml}
-        <div class="img-placeholder card-img">Placeholder</div>
+        <img src="${dish.image || 'assets/placeholder.jpg'}" class="card-img" style="object-fit: cover; background-color: #F8F6F0;" alt="${dish.name}">
         <div class="dish-info">
             <div class="dish-header">
                 <span class="dish-name">${dish.name}</span>
@@ -125,8 +189,8 @@ function setupEventListeners() {
 
     floatingCart.addEventListener("click", openCartModal);
     document.getElementById("btnProceedToBill").addEventListener("click", generateBill);
-    document.getElementById("btnConfirmOrder").addEventListener("click", closeAllModals);
-    document.getElementById("btnPayCounter").addEventListener("click", closeAllModals);
+    document.getElementById("btnConfirmOrder").addEventListener("click", confirmOrder);
+    document.getElementById("btnPayCounter").addEventListener("click", confirmOrder);
 
     window.addEventListener("click", (e) => {
         if (e.target.classList.contains("modal")) {
@@ -153,6 +217,7 @@ function openDishModal(dish) {
     currentModalDish = dish;
     currentModalQty = 1;
 
+    document.getElementById("modalImg").src = dish.image || 'assets/placeholder.jpg';
     document.getElementById("modalDishName").innerText = dish.name;
     document.getElementById("modalDishDesc").innerText = dish.desc;
 
@@ -281,7 +346,7 @@ function renderCartList() {
         const div = document.createElement("div");
         div.className = "cart-item";
         div.innerHTML = `
-            <div class="img-placeholder cart-item-img">IMG</div>
+            <img src="${item.image || 'assets/placeholder.jpg'}" class="cart-item-img" style="object-fit: cover; background-color: #F8F6F0;" alt="${item.name}">
             <div class="cart-item-info">
                 <div class="cart-item-name">${item.name}</div>
                 <div class="cart-item-price">₹${item.price}</div>
@@ -350,6 +415,107 @@ function generateBill() {
     document.getElementById("billModal").classList.add("active");
 }
 
+function confirmOrder() {
+    let tableNum = document.getElementById("tableNumber").value;
+    if (!tableNum) tableNum = 1;
+    
+    // Save table number so they aren't asked again
+    localStorage.setItem('customer_table_id', tableNum);
+    const group = document.getElementById("tableNumberGroup");
+    if(group) group.style.display = "none";
+
+    let total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const finalTotal = total + (total * 0.05);
+
+    placeOrder(cart, tableNum, Number(finalTotal.toFixed(2)));
+
+    cart = [];
+    updateCartIconUI();
+    closeAllModals();
+    renderOrderTracking();
+    alert("Thank you! Your order has been placed.");
+}
+
+function renderOrderTracking() {
+    const tableId = localStorage.getItem('customer_table_id');
+    const trackingSection = document.getElementById('trackingSection');
+    const trackingGrid = document.getElementById('trackingGrid');
+    
+    if (!tableId || !trackingSection || !trackingGrid) return;
+
+    const allOrders = getOrders();
+    const activeOrders = allOrders.filter(o => String(o.tableId) === String(tableId) && o.status !== 'completed' && o.status !== 'cancelled');
+
+    if (activeOrders.length === 0) {
+        trackingSection.style.display = 'none';
+        return;
+    }
+
+    trackingSection.style.display = 'block';
+    trackingGrid.innerHTML = '';
+
+    const hasReady = activeOrders.some(o => o.status === 'ready');
+    const mainNode = document.querySelector('main');
+    const menuSection = document.getElementById('menu');
+
+    if (hasReady) {
+        mainNode.insertBefore(trackingSection, mainNode.firstChild);
+    } else {
+        menuSection.appendChild(trackingSection);
+    }
+
+    activeOrders.sort((a, b) => b.createdAt - a.createdAt);
+
+    activeOrders.forEach(order => {
+        // Status Alert Logic
+        if (previousOrderStatuses[order.orderId] && previousOrderStatuses[order.orderId] !== 'ready' && order.status === 'ready') {
+            alert(`Order #${String(order.orderId).slice(-4)} is ready for serving!`);
+        }
+        previousOrderStatuses[order.orderId] = order.status;
+
+        const card = document.createElement('div');
+        card.className = 'tracking-card';
+
+        const itemsStr = order.items.map(i => `${i.qty}x ${i.name}`).join(', ');
+        
+        let footerHtml = '';
+        const elapsed = Date.now() - order.createdAt;
+        const fiveMins = 300000;
+        
+        if (order.status === 'placed' && elapsed < fiveMins) {
+            const remaining = Math.ceil((fiveMins - elapsed) / 1000);
+            const rMin = Math.floor(remaining / 60);
+            const rSec = remaining % 60;
+            footerHtml = `
+                <div style="color: #e74c3c; font-size: 0.85rem;">Cancel window: ${rMin}m ${rSec}s</div>
+                <button class="btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; border-color: #e74c3c; color: #e74c3c;" onclick="cancelOrder(${order.orderId})">Cancel Order</button>
+            `;
+        } else if (order.status === 'ready') {
+            footerHtml = `
+                <div style="color: #2ecc71; font-weight: 600;">Ready to serve!</div>
+                <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="receiveOrder(${order.orderId})">Mark as Received</button>
+            `;
+        } else if (order.status === 'preparing') {
+            footerHtml = `<div style="color: #3498db; font-weight: 600;">Chef is preparing your food...</div>`;
+        } else {
+            footerHtml = `<div style="color: #7f8c8d; font-size: 0.85rem;">Preparing shortly...</div>`;
+        }
+
+        card.innerHTML = `
+            <div class="tracking-header">
+                <span>Order #${String(order.orderId).slice(-4)}</span>
+                <span class="tracking-status-badge ${order.status}">${order.status}</span>
+            </div>
+            <div class="tracking-items">${itemsStr}</div>
+            <div style="font-weight: 600;">Total: ₹${order.total}</div>
+            <div class="tracking-footer">
+                ${footerHtml}
+            </div>
+        `;
+        trackingGrid.appendChild(card);
+    });
+}
+
 /* =========================================================
    Expose cart helpers to inline HTML onclick attributes.
    ES modules don't attach to window automatically.
@@ -358,6 +524,16 @@ window.quickAddToCart = quickAddToCart;
 window.removeFromCart = removeFromCart;
 window.updateCartItemQty = updateCartItemQty;
 window.closeModal = closeModal;
+window.cancelOrder = function(id) {
+    if (confirm("Are you sure you want to cancel this order?")) {
+        updateOrderStatus(id, 'cancelled');
+        renderOrderTracking();
+    }
+};
+window.receiveOrder = function(id) {
+    updateOrderStatus(id, 'completed');
+    renderOrderTracking();
+};
 
 /* =========================================================
    Bootstrap
